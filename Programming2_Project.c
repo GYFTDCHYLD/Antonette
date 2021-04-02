@@ -41,6 +41,9 @@ void AIassign(int index);
 void removeFromRoom(int patientID);
 void addToRoom(int room_index, int patientID);
 void ChangePatientStatus();
+void roomAdmittanceByAgeReport();
+void admittedPatientListReport();
+void covidStatusReport();
 
 int patient_index = 0, room_index = 0, room_Number = 10;
 
@@ -56,21 +59,24 @@ void Menu(){    // main menu
 	int option;
 	
   	printf("\n");
-   	printf("+=================================+\n");
-  	printf("|                                 |\n");
-   	printf("|  1. Add a Patient               |\n");
-   	printf("|  2. Add a Room                  |\n");
-   	printf("|  3. Change Patient Status       |\n");
-   	printf("|  0. Save & Exit                 |\n");
-   	printf("|                                 |\n");
-  	printf("+=================================+\n");
-   	printf("|  Select an Option [0..3]        |\n");
-   	printf("+=================================+\n");
+   	printf("+===================================+\n");
+  	printf("|                                   |\n");
+   	printf("|  1. Add a Patient                 |\n");
+   	printf("|  2. Add a Room                    |\n");
+   	printf("|  3. Change Patient Status         |\n");
+   	printf("|  4. Room Admittance By Age Report |\n");
+   	printf("|  5. Admitted Patient List Report  |\n");
+   	printf("|  6. Covid Status Report           |\n");
+   	printf("|  0. Save & Exit                   |\n");
+   	printf("|                                   |\n");
+  	printf("+===================================+\n");
+   	printf("|  Select an Option [0..6]          |\n");
+   	printf("+===================================+\n");
    	scanf("%d", &option);
 
-	switch (option){
+	switch (option){ 
          case 0: 
-                
+                return 0;
 				break;
       	case 1: 
 			    AddPatient(); 
@@ -82,6 +88,18 @@ void Menu(){    // main menu
 				break;
       	case 3: 
 		        ChangePatientStatus();
+                Menu();
+		        break;
+		case 4: 
+		        roomAdmittanceByAgeReport();
+                Menu();
+		        break;
+		case 5: 
+		        admittedPatientListReport();
+                Menu();
+		        break;
+		case 6: 
+		        covidStatusReport();
                 Menu();
 		        break;
 		   default:
@@ -247,7 +265,7 @@ void ViewPatients(){// function used to display patent(s) details
       
       if((strcmp(PATIENTS[i].Name.FirstName, "")!=0) && (strcmp(PATIENTS[i].Name.LastName, "")!=0)){
          printf("\n\n  --------------------------------------- ");
-         printf("\n  Patient's index#: %d", PATIENTS[i].IdNumber);
+         printf("\n  Patient's ID#: %d", PATIENTS[i].IdNumber);
          printf("\n  Name: %s %s " ,PATIENTS[i].Name.FirstName, PATIENTS[i].Name.LastName);
          printf("\n  Covid Status: %s ",PATIENTS[i].covidStatus);
          printf("\n  Birth year: %d " ,PATIENTS[i].birthYear);
