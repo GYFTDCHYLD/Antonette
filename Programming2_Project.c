@@ -20,7 +20,7 @@ typedef struct{
    	char status[9];	
 }Patient; 
 Patient PATIENTS[MaxPatients], TempPatient;// array for Maximum number of  PATIENTS"
-
+FILE*Patient_pointer;
 
 typedef struct{
 	int roomNumber;
@@ -31,7 +31,7 @@ typedef struct{
 }Room;
 Room ROOMS[MaxRooms];
 
-FILE*Patient_pointer;
+FILE*Room_pointer;
 
 void Menu();
 void ViewPatients();// function used to display patent(s) details
@@ -44,14 +44,17 @@ void ChangePatientStatus();
 void roomAdmittanceByAgeReport();
 void admittedPatientListReport();
 void covidStatusReport();
+void write_to_file();// write data to sequential file
+void read_from_file();// read data from sequential file
 
-int patient_index = 0, room_index = 0, room_Number = 10;
+int patient_index = 0, room_index = 0;
 
 
 
 int main(){
-   Menu();
-   return 0;
+	read_from_file();
+   	Menu();
+   	return 0;
 }
 
 //____________________________________________
@@ -75,8 +78,8 @@ void Menu(){    // main menu
    	scanf("%d", &option);
 
 	switch (option){ 
-         case 0: 
-                return 0;
+         case 0:
+                write_to_file();
 				break;
       	case 1: 
 			    AddPatient(); 
@@ -126,14 +129,15 @@ void AddPatient(){
       
       printf("\n\n Enter status:\n\t");
       scanf("%s",PATIENTS[patient_index].status);
-      
-   patient_index++; 
-   AIassign(patient_index);  
+    
+	
+	AIassign(patient_index);   
+   	patient_index++;  
 }
 
 
 void AddRoom(){
-	 ROOMS[room_index].roomNumber = room_Number;
+	 ROOMS[room_index].roomNumber = room_index+10;
       
       printf("\n\n Enter respirator or None:\n\t");
       scanf("%s",ROOMS[room_index].respirator);
@@ -291,3 +295,63 @@ void covidStatusReport(){
 	
 	
 }
+
+   
+void write_to_file(){// write patents data to squential files 
+    Room_pointer=fopen("Rooms.txt","w"); 
+    Patient_pointer=fopen("Patients.txt","w"); 
+   	int i; 
+    if(Room_pointer!=NULL){
+         for(i = 0; i < room_index; i++) {
+            fprintf(Room_pointer,"%d %s %d %s %d %d %d %d %d\n", ROOMS[i].roomNumber, ROOMS[i].respirator, ROOMS[i].numberOfBeds, ROOMS[i].assignedPersonel, ROOMS[i].IdNumber[0], ROOMS[i].IdNumber[1], ROOMS[i].IdNumber[2], ROOMS[i].IdNumber[3], ROOMS[i].IdNumber[4]);
+        }
+        fclose(Room_pointer); 	
+	}else{
+        printf("Rooms File could not be created");
+    }
+    
+    
+    
+   	if(Patient_pointer!=NULL){
+         for(i = 0; i < patient_index; i++) {
+            fprintf(Patient_pointer,"%d %s %s %s %d  %s \n", PATIENTS[i].IdNumber, PATIENTS[i].Name.FirstName, PATIENTS[i].Name.LastName, PATIENTS[i].covidStatus , PATIENTS[i].birthYear, PATIENTS[i].status);
+        }
+        fclose(Patient_pointer); 	
+	}else{
+        printf("Patients File could not be created");
+    }
+}
+
+
+   			      
+void read_from_file(){ // read booking from sequential files
+   Room_pointer=fopen("Rooms.txt","r"); 
+   Patient_pointer=fopen("Patients.txt","r");
+   int i;
+   if(Room_pointer!=NULL){
+      for(i = 0; i < MaxRooms; i++){
+         fscanf(Room_pointer,"%d %s %d %s %d %d %d %d %d\n", &ROOMS[i].roomNumber, ROOMS[i].respirator, &ROOMS[i].numberOfBeds, ROOMS[i].assignedPersonel, &ROOMS[i].IdNumber[0], &ROOMS[i].IdNumber[1], &ROOMS[i].IdNumber[2], &ROOMS[i].IdNumber[3], &ROOMS[i].IdNumber[4]);
+         if((strcmp(ROOMS[i].respirator, "")!=0) && (strcmp(ROOMS[i].assignedPersonel, "")!=0)){
+            room_index = room_index +1;// iterate index to add the next room
+         }
+      }
+      fclose(Room_pointer); 
+   }else{
+      printf("Rooms File could not be opened/found");
+   }
+   
+   
+    if(Patient_pointer!=NULL){
+      for(i = 0; i < MaxPatients; i++){
+         fscanf(Patient_pointer,"%d %s %s %s %d  %s \n",&PATIENTS[i].IdNumber, PATIENTS[i].Name.FirstName, PATIENTS[i].Name.LastName, PATIENTS[i].covidStatus , &PATIENTS[i].birthYear, PATIENTS[i].status);
+         if((strcmp(PATIENTS[i].Name.FirstName, "")!=0) && (strcmp(PATIENTS[i].Name.LastName, "")!=0)){
+            patient_index = patient_index +1;// iterate index to add the next patient
+         }
+      }
+      fclose(Patient_pointer); 
+   }else{
+      printf("Patients File could not be opened/found");
+   }
+}
+
+
