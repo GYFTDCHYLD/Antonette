@@ -53,8 +53,8 @@ void write_to_file();// write data to sequential file
 void read_from_file();// read data from sequential file
 
 int patient_index = 0, room_index = 0;
-char roomFile[];
-char patientFile[];
+char roomFile[200];
+char patientFile[200];
 
 
 
@@ -162,7 +162,7 @@ void AddRoom(){
 
 void AIassign(int index){
 	if(strcmp(PATIENTS[index].covidStatus, "none") == 0){
-		strcpy(PATIENTS[index].status,"Descharged");
+		strcpy(PATIENTS[index].status,"descharged");
 	}else{
 		int i;
 		for(i = 0; i <= room_index; i++){
@@ -239,17 +239,6 @@ void removeFromRoom(int patientID){
 	}
 }
 
-void roomAdmittedTo(int patientID){
-	int i, x;
-	for (i = 0; i <= room_index; i++){
-		for (x = 0; x <= 4; x++){
-			if(ROOMS[i].IdNumber[x] == patientID){
-				printf("\t Room # %d, Bed # %d",i+1,x+1);
-				break;
-			}
-		}
-	}
-}
 
 void ChangePatientStatus(){// function used to update oatient(s) status
    ViewPatients("All");// display patients to select from
@@ -281,12 +270,12 @@ void ViewPatients(char viewBy[]){// function used to display patent(s) details
         		Display(i);
          	}
 			else if(strcmp(viewBy, "Admitted")==0){
-         		if(strcmp(PATIENTS[i].status, "Admitted")==0){
+         		if(strcmp(PATIENTS[i].status, "admitted")==0){
          			Display(i);
          			roomAdmittedTo(PATIENTS[i].IdNumber);
 				}
 			}
-			else if(strcmp(viewBy, "Descharged")==0){
+			else if(strcmp(viewBy, "descharged")==0){
           		if(strcmp(PATIENTS[i].status, "Descharged")==0){
          			Display(i);
 				}        		
@@ -306,6 +295,18 @@ void Display(int i){
     printf("\t  Status: %s " ,PATIENTS[i].status);
 }
 
+
+void roomAdmittedTo(int patientID){
+	int i, x;
+	for (i = 0; i <= room_index; i++){
+		for (x = 0; x <= 4; x++){
+			if(ROOMS[i].IdNumber[x] == patientID){
+				printf("\t Room # %d, Bed # %d",ROOMS[i].roomNumber,x+1);
+				break;
+			}
+		}
+	}
+}
 
 
 void roomAdmittanceByAgeReport(){
@@ -356,7 +357,6 @@ void covidStatusReport(){
 void write_to_file(){// write patents data to squential files 
 
     Room_pointer=fopen(roomFile,"w"); 
-    Patient_pointer=fopen(patientFile,"w"); 
    	int i; 
     if(Room_pointer!=NULL){
          for(i = 0; i < room_index; i++) {
@@ -367,8 +367,9 @@ void write_to_file(){// write patents data to squential files
         printf("\n Rooms File could not be created");
     }
     
+    fflush(stdin);
     
-    
+    Patient_pointer=fopen(patientFile,"w"); 
    	if(Patient_pointer!=NULL){
          for(i = 0; i < patient_index; i++) {
             fprintf(Patient_pointer,"%d %s %s %s %d  %s \n", PATIENTS[i].IdNumber, PATIENTS[i].Name.FirstName, PATIENTS[i].Name.LastName, PATIENTS[i].covidStatus , PATIENTS[i].birthYear, PATIENTS[i].status);
@@ -382,12 +383,15 @@ void write_to_file(){// write patents data to squential files
 
    			      
 void read_from_file(){ // read booking from sequential files
+/*
 	printf("Enter Location and Name of Patient File: ");
 	scanf("%s", patientFile);
 	
 	printf("Enter Location and Name of Room File: ");
 	scanf("%s", roomFile);
-	
+	*/
+	strcpy(patientFile,"patient.txt");
+	strcpy(roomFile,"room.txt");
 	system("cls");
 
   	Room_pointer=fopen(roomFile,"r"); 
