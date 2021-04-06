@@ -1,2 +1,2 @@
-10 respirator 1 doctor 11223 11110 11110 0 0
+10 respirator 1 doctor 11223 11110 0 0 0
 11 respirator 7 nurse 0 0 0 0 0

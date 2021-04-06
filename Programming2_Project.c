@@ -38,6 +38,7 @@ FILE*Room_pointer;
 void Menu();
 void ViewPatients(char viewBy[]);// function used to display patent(s) details
 void Display(int i);
+void printStar(int n);
 void sort(int patient_index, char sortBy[]);
 void roomAdmittedTo(int patientID);
 void AddPatient(); 
@@ -310,9 +311,58 @@ void roomAdmittedTo(int patientID){
 
 
 void roomAdmittanceByAgeReport(){
-	system("cls");
-	printf("\n Room Admittance By Age Report");
+	int overSixty=0;
+	int fortyToSixty=0;
+	int twentyToThirtyNine=0;
+	int underTwenty=0;
 	
+	system("cls");
+	printf("\n Room Admittance By Age Report \n");
+	//printf("\n Patients: %d", patient_index);
+	//printf("\n Rooms: %d", room_index);
+	int r, b, p, i;
+	for (r = 0; r < room_index; r++){
+		//printf("\n Checking Room #: %d",ROOMS[r].roomNumber);
+		for (b = 0; b<= 4; b++){
+			//printf("\n Checking Bed #: %d",b+1);
+			if(ROOMS[r].IdNumber[b] != 0){
+				for(p = 0; p < patient_index; p++){
+					if(PATIENTS[p].IdNumber == ROOMS[r].IdNumber[b]){
+						if(currentYear - PATIENTS[p].birthYear > 60){
+							//printf("\n Found patient over 60");
+							overSixty++;
+						}else if(currentYear - PATIENTS[p].birthYear >= 40 && currentYear - PATIENTS[p].birthYear <= 60){
+							//printf("\n Found patient 40 - 60");
+							fortyToSixty++;
+						}else if(currentYear - PATIENTS[p].birthYear >= 20 && currentYear - PATIENTS[p].birthYear <= 39){
+							//printf("\n Found patient 20 - 39");
+							twentyToThirtyNine++;
+						}else if(currentYear - PATIENTS[p].birthYear < 20){
+							//printf("\n Found patient under 20");
+							underTwenty++;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	printf("\n  Over 60 |");
+	printStar(overSixty);
+	printf("\n  40 - 60 |");
+	printStar(fortyToSixty);
+	printf("\n  20 - 39 |");
+	printStar(twentyToThirtyNine);
+	printf("\n Under 20 |");
+	printStar(underTwenty);
+
+	//printf("\n Found patient 40 - 60");
+}
+
+void printStar(int n){
+	int i;
+	for(i = 0; i < n; i++)
+		printf("*");
 }
 
 
