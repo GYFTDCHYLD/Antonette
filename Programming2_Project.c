@@ -137,6 +137,7 @@ void AddPatient(){
 
 
 void AddRoom(){
+	 system("cls");
 	 ROOMS[room_index].roomNumber = room_index+10;
       
       printf("\n\n Enter respirator or None:\n\t");
@@ -153,50 +154,49 @@ void AddRoom(){
 
 
 void AIassign(int index){
-	
-	if(PATIENTS[index].covidStatus == "none"){
+	if(strcmp(PATIENTS[index].covidStatus, "none") == 0){
 		strcpy(PATIENTS[index].status,"Descharged");
 	}else{
 		int i;
 		for(i = 0; i <= room_index; i++){
-	      	if(PATIENTS[i].covidStatus == "critical" && ROOMS[i].respirator == "respirator" && ROOMS[i].assignedPersonel == "doctor" && ROOMS[i].numberOfBeds > 0){
-	      		addToRoom(room_index, PATIENTS[index].IdNumber);
+	      	if(strcmp(PATIENTS[i].covidStatus, "critical") == 0 && strcmp(ROOMS[i].respirator, "respirator") == 0 && strcmp(ROOMS[i].assignedPersonel, "doctor") == 0 && ROOMS[i].numberOfBeds > 0){
+	      		addToRoom(i, PATIENTS[index].IdNumber);
 	      	}else if(currentYear - PATIENTS[i].birthYear > 60){
-			      if(PATIENTS[i].covidStatus == "severe" ){
-						if(ROOMS[i].respirator == "respirator" && ROOMS[i].assignedPersonel == "nurse" ){	
-							addToRoom(room_index, PATIENTS[index].IdNumber);
-						}else if(ROOMS[i].respirator == "respirator" ){
-				      		addToRoom(room_index, PATIENTS[index].IdNumber);
-						}else if(ROOMS[i].assignedPersonel == "nurse" ){
-				      		addToRoom(room_index, PATIENTS[index].IdNumber);
+			      if(strcmp(PATIENTS[i].covidStatus, "severe") == 0){
+						if(strcmp(ROOMS[i].respirator, "respirator") == 0 && strcmp(ROOMS[i].assignedPersonel, "nurse") == 0){	
+							addToRoom(i, PATIENTS[index].IdNumber);
+						}else if(strcmp(ROOMS[i].respirator, "respirator") == 0){
+				      		addToRoom(i, PATIENTS[index].IdNumber);
+						}else if(strcmp(ROOMS[i].assignedPersonel, "nurse") == 0){
+				      		addToRoom(i, PATIENTS[index].IdNumber);
 						}
-				}else if(PATIENTS[i].covidStatus == "mild" ||  PATIENTS[i].covidStatus == "average"){
-					addToRoom(room_index, PATIENTS[index].IdNumber);
+				}else if(strcmp(PATIENTS[i].covidStatus, "mild") == 0 ||  strcmp(PATIENTS[i].covidStatus, "average") == 0){
+					addToRoom(i, PATIENTS[index].IdNumber);
 				}
 			}else if(currentYear - PATIENTS[i].birthYear >= 40 && currentYear - PATIENTS[i].birthYear <= 60){
-				if(PATIENTS[i].covidStatus == "severe" ||  PATIENTS[i].covidStatus == "average"){
-					if(ROOMS[i].assignedPersonel == "nurse" ){
-				      	addToRoom(room_index, PATIENTS[index].IdNumber);
+				if(strcmp(PATIENTS[i].covidStatus, "severe") == 0 ||  strcmp(PATIENTS[i].covidStatus, "average") == 0){
+					if(strcmp(ROOMS[i].assignedPersonel, "nurse") == 0){
+				      	addToRoom(i, PATIENTS[index].IdNumber);
 					}else{
-						addToRoom(room_index, PATIENTS[index].IdNumber);	
+						addToRoom(i, PATIENTS[index].IdNumber);	
 					}
-				}else if(PATIENTS[i].covidStatus == "mild"){
-					addToRoom(room_index, PATIENTS[index].IdNumber);
+				}else if(strcmp(PATIENTS[i].covidStatus, "mild") == 0){
+					addToRoom(i, PATIENTS[index].IdNumber);
 				}	
 			}else if(currentYear - PATIENTS[i].birthYear >= 20 && currentYear - PATIENTS[i].birthYear <= 39){
-				if(PATIENTS[i].covidStatus == "severe" ){
-					if(ROOMS[i].assignedPersonel == "doctor"){
-						addToRoom(room_index, PATIENTS[index].IdNumber);
+				if(strcmp(PATIENTS[i].covidStatus, "severe") == 0){
+					if(strcmp(ROOMS[i].assignedPersonel, "doctor") == 0){
+						addToRoom(i, PATIENTS[index].IdNumber);
 					}
-				}else if(PATIENTS[i].covidStatus == "mild" ||  PATIENTS[i].covidStatus == "average"){
-					addToRoom(room_index, PATIENTS[index].IdNumber);
+				}else if(strcmp(PATIENTS[i].covidStatus, "mild") == 0 ||  strcmp(PATIENTS[i].covidStatus, "average") == 0){
+					addToRoom(i, PATIENTS[index].IdNumber);
 				}
 			}else if(currentYear - PATIENTS[i].birthYear < 20){
-					if(PATIENTS[i].covidStatus == "severe" ||  PATIENTS[i].covidStatus == "average"){
-					if(ROOMS[i].assignedPersonel == "nurse" ){
-				      	addToRoom(room_index, PATIENTS[index].IdNumber);
-					}else if(PATIENTS[i].covidStatus == "mild"){
-				      	addToRoom(room_index, PATIENTS[index].IdNumber);
+				if(strcmp(PATIENTS[i].covidStatus, "severe") == 0 ||  strcmp(PATIENTS[i].covidStatus, "average") == 0){
+					if(strcmp(ROOMS[i].assignedPersonel, "nurse") == 0){
+				      	addToRoom(i, PATIENTS[index].IdNumber);
+					}else if(strcmp(PATIENTS[i].covidStatus,  "mild") == 0){
+				      	addToRoom(i, PATIENTS[index].IdNumber);
 					}
 				}
 			}	
@@ -206,17 +206,20 @@ void AIassign(int index){
 }
 
 void addToRoom(int room_index, int patientID){
+	system("cls");
 	int i;
 	for (i = 0; i <= 4; i++){
 		if(ROOMS[room_index].IdNumber[i] == 0){
 			ROOMS[room_index].IdNumber[i] = patientID;
 			ROOMS[room_index].numberOfBeds-=1;
+			printf("Added to room %d, bed #%d", room_index, i);
 			break;
 		}	
 	}
 }
 
 void removeFromRoom(int patientID){
+	system("cls");
 	int i, x;
 	for (i = 0; i <= room_index; i++){
 		for (x = 0; x <= 4; x++){
@@ -281,17 +284,20 @@ void ViewPatients(){// function used to display patent(s) details
 }
 
 void roomAdmittanceByAgeReport(){
-	
+	system("cls");
+	sort(patient_index);
 	
 }
 
 
 void admittedPatientListReport(){
+	system("cls");
 	
 	
 }
 
 void covidStatusReport(){
+	system("cls");
 	
 	
 }
