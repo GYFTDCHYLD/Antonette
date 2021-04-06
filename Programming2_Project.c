@@ -356,7 +356,6 @@ void roomAdmittanceByAgeReport(){
 	printf("\n Under 20 |");
 	printStar(underTwenty);
 
-	//printf("\n Found patient 40 - 60");
 }
 
 void printStar(int n){
@@ -375,10 +374,39 @@ void admittedPatientListReport(){
 }
 
 void covidStatusReport(){
+	int none=0;
+	int mild=0;
+	int average=0;
+	int severe=0;
+	int critical=0;
+	
 	system("cls");
-	printf("\n Covid Status Report");
+	printf("\n Covid Status Report \n");
+	int p;
+	for(p = 0; p < patient_index; p++){
+		if(strcmp(PATIENTS[p].covidStatus, "none") == 0){
+			none++;
+		}else if(strcmp(PATIENTS[p].covidStatus, "mild") == 0){
+			mild++;
+		}else if(strcmp(PATIENTS[p].covidStatus, "average") == 0){
+			average++;
+		}else if(strcmp(PATIENTS[p].covidStatus, "severe") == 0){
+			severe++;
+		}else if(strcmp(PATIENTS[p].covidStatus, "critical") == 0){
+			critical++;
+		}
+	}
 	
-	
+	printf("\n     None |");
+	printStar(none);
+	printf("\n     Mild |");
+	printStar(mild);
+	printf("\n  Average |");
+	printStar(average);
+	printf("\n   Severe |");
+	printStar(severe);
+	printf("\n Critical |");
+	printStar(critical);
 }
 
  void sort(int patient_index, char sortBy[]){/* bubble sort struct */
@@ -433,15 +461,14 @@ void write_to_file(){// write patents data to squential files
 
    			      
 void read_from_file(){ // read booking from sequential files
-/*
+
 	printf("Enter Location and Name of Patient File: ");
 	scanf("%s", patientFile);
 	
 	printf("Enter Location and Name of Room File: ");
 	scanf("%s", roomFile);
-	*/
-	strcpy(patientFile,"patient.txt");
-	strcpy(roomFile,"room.txt");
+
+
 	system("cls");
 
   	Room_pointer=fopen(roomFile,"r"); 
