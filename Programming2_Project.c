@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <conio.h>
+
 #define MaxPatients 35 //define the maximum amount of patient the syste can keep track of
 #define MaxRooms 21
 #define currentYear 2021
@@ -34,7 +36,10 @@ Room ROOMS[MaxRooms];
 FILE*Room_pointer;
 
 void Menu();
-void ViewPatients();// function used to display patent(s) details
+void ViewPatients(char viewBy[]);// function used to display patent(s) details
+void Display(int i);
+void sort(int patient_index, char sortBy[]);
+void roomAdmittedTo(int patientID);
 void AddPatient(); 
 void AddRoom();
 void AIassign(int index);
@@ -48,6 +53,8 @@ void write_to_file();// write data to sequential file
 void read_from_file();// read data from sequential file
 
 int patient_index = 0, room_index = 0;
+char roomFile[];
+char patientFile[];
 
 
 
@@ -232,22 +239,20 @@ void removeFromRoom(int patientID){
 	}
 }
 
-void sort(int patient_index){/* bubble sort struct */
-	int i, index;
-
-	for(i = 1; i < patient_index; i++){
-		for(index = 0; index < patient_index - i; index++){
-			if(PATIENTS[index].birthYear > PATIENTS[index+1].birthYear){
-				TempPatient = PATIENTS[index];
-				PATIENTS[index] = PATIENTS[index+1];
-				PATIENTS[index+1] = TempPatient;
-			}	
+void roomAdmittedTo(int patientID){
+	int i, x;
+	for (i = 0; i <= room_index; i++){
+		for (x = 0; x <= 4; x++){
+			if(ROOMS[i].IdNumber[x] == patientID){
+				printf("\t Room # %d, Bed # %d",i+1,x+1);
+				break;
+			}
 		}
 	}
 }
 
 void ChangePatientStatus(){// function used to update oatient(s) status
-   ViewPatients();// display patients to select from
+   ViewPatients("All");// display patients to select from
    int id, i;
    	int birthYear;
    	char statusUpdate[9];	
@@ -266,46 +271,92 @@ void ChangePatientStatus(){// function used to update oatient(s) status
 }
 
 
-void ViewPatients(){// function used to display patent(s) details
+void ViewPatients(char viewBy[]){// function used to display patent(s) details
 	int i;
-   for (i = 0; i < MaxPatients; i++){
+	printf("\n\n  -------------------------------------------------------------------------------------------------------------------------------- ");
+   	for (i = 0; i < MaxPatients; i++){
       
-      if((strcmp(PATIENTS[i].Name.FirstName, "")!=0) && (strcmp(PATIENTS[i].Name.LastName, "")!=0)){
-         printf("\n\n  --------------------------------------- ");
-         printf("\n  Patient's ID#: %d", PATIENTS[i].IdNumber);
-         printf("\n  Name: %s %s " ,PATIENTS[i].Name.FirstName, PATIENTS[i].Name.LastName);
-         printf("\n  Covid Status: %s ",PATIENTS[i].covidStatus);
-         printf("\n  Birth year: %d " ,PATIENTS[i].birthYear);
-         printf("\n  Status: %s " ,PATIENTS[i].status);
-        printf("\n  --------------------------------------- ");
-      }
-     
-   }
+      	if((strcmp(PATIENTS[i].Name.FirstName, "")!=0) && (strcmp(PATIENTS[i].Name.LastName, "")!=0)){
+         	if(strcmp(viewBy, "All")==0){
+        		Display(i);
+         	}
+			else if(strcmp(viewBy, "Admitted")==0){
+         		if(strcmp(PATIENTS[i].status, "Admitted")==0){
+         			Display(i);
+         			roomAdmittedTo(PATIENTS[i].IdNumber);
+				}
+			}
+			else if(strcmp(viewBy, "Descharged")==0){
+          		if(strcmp(PATIENTS[i].status, "Descharged")==0){
+         			Display(i);
+				}        		
+			}
+       
+      	}
+   	}
+    printf("\n  --------------------------------------------------------------------------------------------------------------------------------");
+    
 }
+
+void Display(int i){
+	printf("\n  Patient's ID#: %d", PATIENTS[i].IdNumber);
+    printf("\t  Name: %s %s " ,PATIENTS[i].Name.FirstName, PATIENTS[i].Name.LastName);
+    printf("\t  Covid Status: %s ",PATIENTS[i].covidStatus);
+    printf("\t  Birth year: %d " ,PATIENTS[i].birthYear);
+    printf("\t  Status: %s " ,PATIENTS[i].status);
+}
+
+
 
 void roomAdmittanceByAgeReport(){
 	system("cls");
-	sort(patient_index);
+	printf("\n Room Admittance By Age Report");
 	
 }
 
 
 void admittedPatientListReport(){
 	system("cls");
+	printf("\n Admitted Patient List Report");
 	
-	
+	sort(patient_index, "Id");
+	ViewPatients("Admitted");// display patients to select 
 }
 
 void covidStatusReport(){
 	system("cls");
+	printf("\n Covid Status Report");
 	
 	
 }
 
-   
+ void sort(int patient_index, char sortBy[]){/* bubble sort struct */
+	int i, index;
+
+	for(i = 1; i < patient_index; i++){
+		for(index = 0; index < patient_index - i; index++){
+			if(strcmp(sortBy, "Id")==0){// id assending
+        		if(PATIENTS[index].IdNumber > PATIENTS[index+1].IdNumber){
+					TempPatient = PATIENTS[index];
+					PATIENTS[index] = PATIENTS[index+1];
+					PATIENTS[index+1] = TempPatient;
+				}	
+         	}else if(strcmp(sortBy, "Age")==0){// age assending
+        		if(PATIENTS[index].birthYear < PATIENTS[index+1].birthYear){
+					TempPatient = PATIENTS[index];
+					PATIENTS[index] = PATIENTS[index+1];
+					PATIENTS[index+1] = TempPatient;
+				}	
+         	}
+		}
+	}
+}
+
+ 
 void write_to_file(){// write patents data to squential files 
-    Room_pointer=fopen("Rooms.txt","w"); 
-    Patient_pointer=fopen("Patients.txt","w"); 
+
+    Room_pointer=fopen(roomFile,"w"); 
+    Patient_pointer=fopen(patientFile,"w"); 
    	int i; 
     if(Room_pointer!=NULL){
          for(i = 0; i < room_index; i++) {
@@ -313,7 +364,7 @@ void write_to_file(){// write patents data to squential files
         }
         fclose(Room_pointer); 	
 	}else{
-        printf("Rooms File could not be created");
+        printf("\n Rooms File could not be created");
     }
     
     
@@ -324,26 +375,35 @@ void write_to_file(){// write patents data to squential files
         }
         fclose(Patient_pointer); 	
 	}else{
-        printf("Patients File could not be created");
+        printf("\n Patients File could not be created");
     }
 }
 
 
    			      
 void read_from_file(){ // read booking from sequential files
-   Room_pointer=fopen("Rooms.txt","r"); 
-   Patient_pointer=fopen("Patients.txt","r");
-   int i;
-   if(Room_pointer!=NULL){
-      for(i = 0; i < MaxRooms; i++){
-         fscanf(Room_pointer,"%d %s %d %s %d %d %d %d %d\n", &ROOMS[i].roomNumber, ROOMS[i].respirator, &ROOMS[i].numberOfBeds, ROOMS[i].assignedPersonel, &ROOMS[i].IdNumber[0], &ROOMS[i].IdNumber[1], &ROOMS[i].IdNumber[2], &ROOMS[i].IdNumber[3], &ROOMS[i].IdNumber[4]);
-         if((strcmp(ROOMS[i].respirator, "")!=0) && (strcmp(ROOMS[i].assignedPersonel, "")!=0)){
-            room_index = room_index +1;// iterate index to add the next room
-         }
-      }
-      fclose(Room_pointer); 
+	printf("Enter Location and Name of Patient File: ");
+	scanf("%s", patientFile);
+	
+	printf("Enter Location and Name of Room File: ");
+	scanf("%s", roomFile);
+	
+	system("cls");
+
+  	Room_pointer=fopen(roomFile,"r"); 
+  	Patient_pointer=fopen( patientFile ,"r");
+  	
+   	int i;
+   	if(Room_pointer!=NULL){
+      	for(i = 0; i < MaxRooms; i++){
+        		fscanf(Room_pointer,"%d %s %d %s %d %d %d %d %d\n", &ROOMS[i].roomNumber, ROOMS[i].respirator, &ROOMS[i].numberOfBeds, ROOMS[i].assignedPersonel, &ROOMS[i].IdNumber[0], &ROOMS[i].IdNumber[1], &ROOMS[i].IdNumber[2], &ROOMS[i].IdNumber[3], &ROOMS[i].IdNumber[4]);
+        	 if((strcmp(ROOMS[i].respirator, "")!=0) && (strcmp(ROOMS[i].assignedPersonel, "")!=0)){
+           	 	room_index = room_index +1;// iterate index to add the next room
+         	}
+      	}	
+      	fclose(Room_pointer); 
    }else{
-      printf("Rooms File could not be opened/found");
+      	printf("\n Rooms File could not be opened/found");
    }
    
    
@@ -356,7 +416,7 @@ void read_from_file(){ // read booking from sequential files
       }
       fclose(Patient_pointer); 
    }else{
-      printf("Patients File could not be opened/found");
+      printf("\n Patients File could not be opened/found");
    }
 }
 
